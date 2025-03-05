@@ -1,9 +1,11 @@
+import java.util.Random;
 import java.util.Scanner;
 
 /**
   The BattleShip class manages the gameplay of the Battleship game between two players.
   It includes methods to manage grids, turns, and check the game status.
  */
+
 public class BattleShip {
 
     // Grid size for the game
@@ -24,6 +26,8 @@ public class BattleShip {
     // Scanner object for user input
     static Scanner scanner = new Scanner(System.in);
 
+    static int ROW;
+    static int COL;
     /**
       The main method that runs the game loop.
       It initializes the grids for both players, places ships randomly, and manages turns.
@@ -47,10 +51,87 @@ public class BattleShip {
         while (!isGameOver()) {
             if (player1Turn) {
                 System.out.println("Player 1's turn:");
+                String choice = scanner.nextLine();
+                switch (choice.charAt(0)){
+                    case 'A':
+                        COL = 0;
+                        break;
+                    case 'B':
+                        COL = 1;
+                        break;
+                    case 'C':
+                        COL = 2;
+                        break;
+                    case 'D':
+                        COL = 3;
+                        break;
+                    case 'E':
+                        COL = 4;
+                        break;
+                    case 'F':
+                        COL = 5;
+                        break;
+                    case 'G':
+                        COL = 6;
+                        break;
+                    case 'H':
+                        COL = 7;
+                        break;
+                    case 'I':
+                        COL = 8;
+                        break;
+                    case 'J':
+                        COL = 9;
+                        break;
+                }
+                switch (choice.charAt(1)){
+                    case '0':
+                        ROW = 0;
+                        break;
+                    case '1':
+                        ROW = 1;
+                        break;
+                    case '2':
+                        ROW = 2;
+                        break;
+                    case '3':
+                        ROW = 3;
+                        break;
+                    case '4':
+                        ROW = 4;
+                        break;
+                    case '5':
+                        ROW = 5;
+                        break;
+                    case '6':
+                        ROW = 6;
+                        break;
+                    case '7':
+                        ROW = 7;
+                        break;
+                    case '8':
+                        ROW = 8;
+                        break;
+                    case '9':
+                        ROW = 9;
+                        break;
+                }
+
+                if(isValidInput(choice))
+                    break;
+                else
+                    System.out.print("Invalid Input!");
+
                 printGrid(player1TrackingGrid);
                 playerTurn(player2Grid, player1TrackingGrid);
             } else {
                 System.out.println("Player 2's turn:");
+                String choice = scanner.nextLine();
+                if(isValidInput(choice))
+                    break;
+                else
+                    System.out.print("Invalid Input!");
+
                 printGrid(player2TrackingGrid);
                 playerTurn(player1Grid, player2TrackingGrid);
             }
@@ -67,6 +148,11 @@ public class BattleShip {
      */
     static void initializeGrid(char[][] grid) {
         //todo
+        for(int i = 0; i < GRID_SIZE; i ++){
+            for(int j = 0; j < GRID_SIZE; j ++){
+                grid[i][j] = '~';
+            }
+        }
     }
 
     /**
@@ -77,6 +163,33 @@ public class BattleShip {
      */
     static void placeShips(char[][] grid) {
         //todo
+
+        for(int size = 2; size < 6; size ++) {
+            // 1 = -- and 0 = |
+            boolean check = false;
+            while(!check) {
+                Random random = new Random();
+                int direction = random.nextInt(2);
+                int row = random.nextInt(10);
+                int col = random.nextInt(10);
+
+                if (direction == 1) {
+                    if (col + size - 1 < GRID_SIZE && canPlaceShip(grid, row, col, size, direction)) {
+                        for (int i = col; i < col + size; i++) {
+                            grid[row][i] = 's';
+                        }
+                        check = true;
+                    }
+                } else {
+                    if (row + size - 1 < GRID_SIZE && canPlaceShip(grid, row, col, size, direction)) {
+                        for (int i = row; i < row + size; i++) {
+                            grid[i][col] = 's';
+                        }
+                        check = true;
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -91,8 +204,21 @@ public class BattleShip {
       @param horizontal The direction of the ship (horizontal or vertical).
       @return true if the ship can be placed at the specified location, false otherwise.
      */
-    static boolean canPlaceShip(char[][] grid, int row, int col, int size, boolean horizontal) {
+    static boolean canPlaceShip(char[][] grid, int row, int col, int size, int horizontal) {
         //todo
+        // 1 = -- and 0 = |
+        if(horizontal == 1){
+            for(int i = col; i < col + size; i ++){
+                if(grid[row][i] == 's')
+                    return false;
+            }
+        }
+        else{
+            for(int i = row; i < row + size; i ++){
+                if(grid[i][col] == 's')
+                    return false;
+            }
+        }
         return true;
     }
 
@@ -105,6 +231,14 @@ public class BattleShip {
      */
     static void playerTurn(char[][] opponentGrid, char[][] trackingGrid) {
         //todo
+        if(opponentGrid[ROW][COL] == '~'){
+            System.out.print("Miss!");
+            trackingGrid[ROW][COL] = '0';
+        }
+        else{
+            System.out.print("Hit!");
+            trackingGrid[ROW][COL] = 'X';
+        }
     }
 
     /**
@@ -125,6 +259,12 @@ public class BattleShip {
      */
     static boolean allShipsSunk(char[][] grid) {
         //todo
+        for(int i = 0; i < GRID_SIZE; i ++){
+            for(int j = 0; j < GRID_SIZE; j ++){
+                if (grid[i][j] == 's')
+                    return false;
+            }
+        }
         return true;
     }
 
@@ -136,7 +276,9 @@ public class BattleShip {
      */
     static boolean isValidInput(String input) {
         //todo
-        return true;
+        if(input.length() == 2 && input.charAt(0) >= 'A' && input.charAt(1) <= 'J' && input.charAt(1) >= '1' && input.charAt(1) <= '9')
+            return true;
+        return false;
     }
 
     /**
@@ -147,5 +289,11 @@ public class BattleShip {
      */
     static void printGrid(char[][] grid) {
         //todo
+
+        for(int i = 0; i < GRID_SIZE; i ++){
+            for(int j = 0; j < GRID_SIZE; j ++){
+                System.out.print(grid[i][j]);
+            }
+        }
     }
 }
