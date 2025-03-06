@@ -263,8 +263,9 @@ public class BattleShip {
         int cnt = 0;
         for(int i = 0; i < GRID_SIZE; i ++){
             for(int j = 0; j < GRID_SIZE; j ++){
-                if (grid[i][j] == 'X')
-                    cnt ++;
+                if (grid[i][j] == 'X') {
+                    cnt++;
+                }
             }
         }
         if(cnt >= 14)
